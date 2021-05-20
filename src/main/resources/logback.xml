@@ -1,0 +1,34 @@
+<!DOCTYPE xml>
+<configuration packagingData="true">
+	<shutdownHook
+		class="ch.qos.logback.core.hook.DelayingShutdownHook" />
+	<timestamp key="timestamp" datePattern="yyyyMMddHHmmssSSS" />
+	<appender name="ASYNC_AWS_LOGS"
+		class="ca.pjer.logback.AwsLogsAppender">
+		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+			<level>INFO</level>
+		</filter>
+		<layout>
+			<pattern>%d{yyyyMMdd'T'HHmmss} | %thread | %level | %logger{26} |
+				%msg | %exception{full} %n</pattern>
+		</layout>
+		<logGroupName>/aws/elasticbeanstalk/msdataauth-dev/application-trace.log</logGroupName>
+		<logStreamName>${hostname}-${timestamp}</logStreamName>
+		<logRegion>us-west-1</logRegion>
+		<maxBatchLogEvents>50</maxBatchLogEvents>
+		<maxFlushTimeMillis>3000</maxFlushTimeMillis>
+		<maxBlockTimeMillis>5000</maxBlockTimeMillis>
+	</appender>
+	<appender name="STDOUT"
+		class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<!--<pattern>%d{yyyyMMdd'T'HHmmss} | %thread | %level | %logger{26} |
+				%msg | %exception{full} %n</pattern>-->
+			<pattern>%d{yyyyMMdd HH:mm:ss} %msg %exception{full} %n</pattern>
+		</encoder>
+	</appender>
+	<root level="INFO">
+		<appender-ref ref="STDOUT" />
+		<!--<appender-ref ref="ASYNC_AWS_LOGS" />-->
+	</root>
+</configuration>

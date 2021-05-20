@@ -1,0 +1,56 @@
+spring:
+  app:
+    version: 0.0.1
+ # config.activate.on-profile: local
+  profiles:
+    active: local
+  project:
+    name: LOCAL_ECD
+  application:
+    name: MS_CUENTA
+  output:
+    ansi:
+      enabled: always
+  flyway:
+    baseline-on-migrate: true
+    locations:
+      - classpath:db/migration
+      - classpath:db/callback  
+
+server:
+  port: 8084
+  servlet:
+    contextPath: /api/mscuenta
+
+spring.datasource.url: jdbc:postgresql://localhost:5432/cuentadb
+spring.datasource.username: postgres
+spring.datasource.password: XXX
+spring.datasource.hikari.connectionTimeout: 10000
+#spring.datasource.hikari.idleTimeout: 60000 # En el pool de conexiones sólo se puede mantener 60 segundos una conexión inactiva (En producción desactivar)
+spring.datasource.hikari.maxLifetime: 1800000 # Vida últil máxima de una conexión sin uso en el pool será 30 minutos
+spring.datasource.hikari.leakDetectionThreshold: 30000
+#spring.datasource.hikari.minimumIdle: 5 # Minima cantidad de conexiones que mantendrá encendidas pero inactivas en el pool  (En producción desactivar)
+spring.datasource.hikari.maximumPoolSize: 15
+spring.datasource.hikari.connection-init-sql: "SET TIME ZONE 'America/Santiago'; SET statement_timeout to 500;"
+
+spring.redis.host: localhost:6379
+spring.redis.password: 
+spring.redis.timeout: 350
+
+redis.tiempoexpiracion.cuenta: 2
+
+
+api.rest.mockend: https://jsonplaceholder.typicode.com/todos/      
+   
+      
+resilience4j.timelimiter:
+    configs:
+        default:
+            cancelRunningFuture: true
+            timeoutDuration: 1s
+    instances:
+        backendA:
+            baseConfig: default
+        agentTodoObtener:
+            timeoutDuration: 500ms
+            cancelRunningFuture: true   
