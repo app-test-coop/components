@@ -2,6 +2,7 @@ package cl.coopeuch.ecd.mscuenta.application;
 
 import java.time.LocalDateTime;
 
+import cl.coopeuch.ecd.mscuenta.domain.Cliente;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -118,8 +119,12 @@ public class CuentaService implements ICuentaService {
 		return cuentaDb.obtenerHora();
 	}
 
-	
+	@Override
+	public Cliente crearCliente(Cliente cliente) {
+		Cliente out = cuentaDb.crearCliente(cliente);
+		return out;
+
+	}
 
 
-	
 }

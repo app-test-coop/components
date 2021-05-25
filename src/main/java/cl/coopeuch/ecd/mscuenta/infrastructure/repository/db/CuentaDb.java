@@ -4,6 +4,7 @@ import java.sql.PreparedStatement;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
+import cl.coopeuch.ecd.mscuenta.domain.Cliente;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -118,7 +119,31 @@ public class CuentaDb implements ICuentaDb {
 		
 		return tiempo.getHora();
 	}
-	
-	
+
+	@Override
+	public Cliente crearCliente(Cliente cliente) {
+
+		LocalDateTime inicioProceso = LocalDateTime.now();
+
+		StringBuilder query = new StringBuilder();
+		query.append("INSERT INTO datos_cliente ");
+		query.append("(rut, email, telefono) ");
+		query.append("VALUES (?, ?, ?)");
+		KeyHolder keyHolder = new GeneratedKeyHolder();
+		jdbcTemplate.update(connection -> {
+			PreparedStatement ps = connection.prepareStatement(query.toString(), new String[] { "id" });
+			ps.setObject(1, cliente.getRut());
+			ps.setObject(2, cliente.getEmail());
+			ps.setObject(3, cliente.getTelefono());
+
+			return ps;
+		}, keyHolder);
+
+		MetricaParam metricaParam = new MetricaParam(setting.getProjectName(), setting.getAppName(),
+				"DB_CUENTA_CREAR", (double) ChronoUnit.MILLIS.between(inicioProceso, LocalDateTime.now()));
+		metricaRepository.putTiempoRespuestaAsync(metricaParam);
+
+		return cliente;
+	}
 
 }

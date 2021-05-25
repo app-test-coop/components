@@ -22,6 +22,7 @@ import cl.coopeuch.ecd.infrastructurecross.util.token.TokenUtil;
 import cl.coopeuch.ecd.mscuenta.application.dto.in.CuentaCreacion;
 import cl.coopeuch.ecd.mscuenta.application.dto.in.CuentaTransaccion;
 import cl.coopeuch.ecd.mscuenta.application.dto.out.CuentaResumen;
+import cl.coopeuch.ecd.mscuenta.application.dto.out.Hacer;
 import cl.coopeuch.ecd.mscuenta.application.port.input.ICuentaController;
 import cl.coopeuch.ecd.mscuenta.application.port.interactor.ICuentaService;
 import cl.coopeuch.ecd.mscuenta.infrastructurecross.application.Setting;
@@ -90,24 +91,26 @@ public class CuentaController implements ICuentaController {
 	}
 
 	@ApiOperation(value = "Realizar abono en dinero a una cuenta")
-	@PutMapping(value = "v1/realizarabono", headers = {"Authorization"})
+	@PutMapping(value = "v1/realizarabono")
 	@Override
 	public ResponseEntity<GeneralResponse<CuentaResumen>> realizarAbono(@RequestHeader HttpHeaders headers,
 			@Valid GeneralRequest<CuentaTransaccion> request) {
 
-		LocalDateTime inicioProceso = LocalDateTime.now();
 
 		GeneralResponse<CuentaResumen> response = new GeneralResponse<>();
-		String rut = TokenUtil.getInstance().obtenerClaim(HeaderUtil.getInstance().getToken(headers), "sub");
+		//String rut = TokenUtil.getInstance().obtenerClaim(HeaderUtil.getInstance().getToken(headers), "sub");
 
-		CuentaResumen data = cuentaService.realizarAbono(rut, request.getParams());
+		CuentaResumen data = new CuentaResumen();//  cuentaService.realizarAbono(rut, request.getParams());
+		data.setNumero("777");
+		
 		response.setData(data);
 		
-		MetricaParam metricaParam = new MetricaParam(setting.getProjectName(), setting.getAppName(),
+		/*MetricaParam metricaParam = new MetricaParam(setting.getProjectName(), setting.getAppName(),
 				"API_CUENTA_REALIZARABONO", (double) ChronoUnit.MILLIS.between(inicioProceso, LocalDateTime.now()));
 		metricaRepository.putTiempoRespuestaAsync(metricaParam);
-
+*/
 		return ResponseEntity.ok(response);
+		
 	}
 
 	@ApiOperation(value = "Realizar cargo en dinero a una cuenta")
